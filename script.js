@@ -1,7 +1,12 @@
 /*******************************************************************************
  * Author: Tyler Swindell
  * Date: May 30, 2021
- * TODO: Add 'click' listItem to remove item
+ * Updates: 
+ *    May 30: Built out List object, constructor, addItem, resetHTMLElements,
+ *            removeItem, getItems and updateItems methods.
+ *    May 31: Now adds 'click' eventListener to each item as it is updated.
+ *            Added listItemTags to contructor 
+ *            for easy access to tags used for li elems
  *******************************************************************************/
 (function(){
 
@@ -12,16 +17,17 @@
 
    /* List Object Definition */
    class List {
-      constructor(name, listElem, listInputElem) {
+      constructor(name, listElem, listInputElem, listItemTags) {
          this.name = name;
          this.items = [];
          this.listElem = listElem;
          this.listInputElem = listInputElem;
+         this.listItemTags = listItemTags;
       }
 
       addItem(content) { 
          this.items.push(content); 
-         this.updateList();
+         this.updateList(this.listItemTags);
       }
 
       resetHTMLElements() {
@@ -33,7 +39,7 @@
          const eTargetText = e.target.innerText;
          const listIndex = eTargetText.split(":")[0] - 1;
          this.items.splice(listIndex, 1);
-         this.updateList();
+         this.updateList(this.listItemTags);
       }
 
       getItems() { return this.items; }
@@ -43,12 +49,12 @@
          this.items.forEach((item, index) => {
             this.listElem.innerHTML += `<li id="item${index+1}">
                <span class="list-number">${index+1}:</span>${item}</li>`;
-            this.addRemoveOption(`item${index+1}`);      
+            this.addRemoveOption(this.listItemTags);      
          });
       };
 
-      addRemoveOption(listItemTag) { 
-         const listItems = document.querySelectorAll('#list>li'); 
+      addRemoveOption() { 
+         const listItems = document.querySelectorAll(this.listItemTags); 
          listItems.forEach( item => item.addEventListener('click', e => this.removeItem(e) ));
       }
    }
@@ -63,10 +69,10 @@
       const inputElem = document.getElementById("input-list-item");
       const addButton = document.getElementById("add-to-list");
       const blankInputElem = document.getElementById("blank");
-      let listItemElems;
+      const LIST_ITEM_TAGS = '#list>li';
 
       // Main list object
-      const toDoList = new List("To Do List", listElem, inputElem);
+      const toDoList = new List("To Do List", listElem, inputElem, LIST_ITEM_TAGS);
 
       /* Event Listeners */
 
